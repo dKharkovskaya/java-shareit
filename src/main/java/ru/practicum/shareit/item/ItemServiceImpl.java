@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.NullFieldModelException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.mapper.mapperItem;
+import ru.practicum.shareit.item.mapper.MapperItem;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
@@ -28,10 +28,10 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto create(ItemDto dto, Integer userId) {
         User owner = userService.getById(userId);
-        Item item = mapperItem.toItem(dto, owner, null);
+        Item item = MapperItem.toItem(dto, owner, null);
         item.setId(getNextId());
         items.put(item.getId(), item);
-        return mapperItem.toItemDto(item);
+        return MapperItem.toItemDto(item);
     }
 
     @Override
@@ -53,13 +53,13 @@ public class ItemServiceImpl implements ItemService {
         if (available != null) {
             item.setAvailable(available);
         }
-        return mapperItem.toItemDto(items.get(itemDtoId));
+        return MapperItem.toItemDto(items.get(itemDtoId));
     }
 
     @Override
     public ItemDto getById(Integer id) {
         checkItem(id);
-        return mapperItem.toItemDto(items.get(id));
+        return MapperItem.toItemDto(items.get(id));
     }
 
     @Override
@@ -68,7 +68,7 @@ public class ItemServiceImpl implements ItemService {
 
         return items.values().stream()
                 .filter(item -> item.getOwner().getId() == userId)
-                .collect(Collectors.toList()).stream().map(mapperItem::toItemDto)
+                .collect(Collectors.toList()).stream().map(MapperItem::toItemDto)
                 .collect(Collectors.toList());
     }
 
@@ -82,7 +82,7 @@ public class ItemServiceImpl implements ItemService {
                 .filter(item -> item.getName().toLowerCase().contains(text.toLowerCase()) ||
                         item.getDescription().toLowerCase().contains(text.toLowerCase()))
                 .collect(Collectors.toList()).stream()
-                .map(mapperItem::toItemDto)
+                .map(MapperItem::toItemDto)
                 .collect(Collectors.toList());
 
     }
