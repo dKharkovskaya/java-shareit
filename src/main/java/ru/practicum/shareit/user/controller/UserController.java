@@ -2,15 +2,12 @@ package ru.practicum.shareit.user.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.MapperUser;
-import ru.practicum.shareit.user.service.UserServiceImpl;
+import ru.practicum.shareit.user.service.UserService;
 
 import java.util.Collection;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @RestController
@@ -18,45 +15,33 @@ import java.util.stream.Collectors;
 @Slf4j
 @AllArgsConstructor
 public class UserController {
-    private UserServiceImpl userServiceImpl;
+    private UserService userService;
 
     @GetMapping
     private Collection<UserDto> getAllUsers() {
-        return userServiceImpl.findAll().stream().map(MapperUser::toUserDto).collect(Collectors.toList());
+        return userService.findAll().stream().map(MapperUser::toUserDto).collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
     private UserDto getUser(@PathVariable("id") int id) {
-        try {
-            return MapperUser.toUserDto(userServiceImpl.getById(id));
-        } catch (NoSuchElementException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
+            return MapperUser.toUserDto(userService.getById(id));
     }
 
     @PostMapping
     private UserDto addUser(@RequestBody UserDto user) {
-        var s = userServiceImpl.create(MapperUser.toUser(user));
+        var s = userService.create(MapperUser.toUser(user));
         return MapperUser.toUserDto(s);
     }
 
     @PatchMapping("/{id}")
     private UserDto updateUser(@RequestBody UserDto user, @PathVariable int id) {
-        try {
             var u = MapperUser.toUser(user);
-            userServiceImpl.update(u, id);
-            return MapperUser.toUserDto(userServiceImpl.getById(id));
-        } catch (NoSuchElementException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
+            userService.update(u, id);
+            return MapperUser.toUserDto(userService.getById(id));
     }
 
     @DeleteMapping("/{id}")
     private void deleteUser(@PathVariable int id) {
-        try {
-            userServiceImpl.deleteById(id);
-        } catch (NoSuchElementException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
+            userService.deleteById(id);
     }
 }

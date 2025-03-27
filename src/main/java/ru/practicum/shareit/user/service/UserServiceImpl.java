@@ -1,9 +1,10 @@
 package ru.practicum.shareit.user.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.ValidationException;
+import ru.practicum.shareit.error.exception.ConflictException;
+import ru.practicum.shareit.error.exception.NotFoundException;
+import ru.practicum.shareit.error.exception.ValidationException;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.*;
@@ -45,7 +46,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getById(int id) {
         if (!users.containsKey(id)) {
-            throw new ValidationException(HttpStatus.NOT_FOUND, "The user just not exist");
+            throw new NotFoundException("Пользователь не найден");
         }
         return users.get(id);
     }
@@ -62,18 +63,18 @@ public class UserServiceImpl implements UserService {
 
     private void validate(User user) {
         if (user.getEmail() == null || !(user.getEmail().contains("@"))) {
-            throw new ValidationException(HttpStatus.BAD_REQUEST, "The user email must include @, should be without spaces " +
+            throw new ValidationException("The user email must include @, should be without spaces " +
                     "and shouldn't be blank");
         }
         if (user.getName() == null || user.getName().equals("")) {
-            throw new ValidationException(HttpStatus.BAD_REQUEST, "The user name can't be empty or contains spaces");
+            throw new NotFoundException("The user name can't be empty or contains spaces");
         }
         for (User u : users.values()) {
             if (u.getId() == user.getId()) {
                 continue;
             }
             if (u.getEmail().equals(user.getEmail())) {
-                throw new ValidationException(HttpStatus.CONFLICT, "The user email is already exist");
+                throw new ConflictException("The user email is already exist");
             }
         }
     }
@@ -84,7 +85,7 @@ public class UserServiceImpl implements UserService {
                 continue;
             }
             if (u.getEmail().equals(user.getEmail())) {
-                throw new ValidationException(HttpStatus.CONFLICT, "The user email is already exist");
+                throw new ConflictException("The user email is already exist");
             }
         }
     }

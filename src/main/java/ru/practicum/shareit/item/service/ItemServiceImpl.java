@@ -1,16 +1,14 @@
-package ru.practicum.shareit.item;
+package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.NullFieldModelException;
-import ru.practicum.shareit.exception.ValidationException;
+import ru.practicum.shareit.error.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.MapperItem;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.service.UserService;
+import ru.practicum.shareit.user.service.UserServiceImpl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,7 +21,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
     private final Map<Integer, Item> items = new HashMap<>();
-    private final UserService userService;
+    private final UserServiceImpl userService;
 
     @Override
     public ItemDto create(ItemDto dto, Integer userId) {
@@ -95,13 +93,13 @@ public class ItemServiceImpl implements ItemService {
 
     private void checkItem(Integer id) {
         if (!items.containsKey(id)) {
-            throw new NullFieldModelException("");
+            throw new NotFoundException("Item not found");
         }
     }
 
     private void checkOwner(Item item, Integer ownerId) {
         if (item.getOwner().getId() != ownerId) {
-            throw new ValidationException(HttpStatus.NOT_FOUND, "The user not found");
+            throw new NotFoundException("The user not found");
         }
     }
 }
