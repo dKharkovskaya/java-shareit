@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.shareit.error.exception.ConflictException;
+import ru.practicum.shareit.error.exception.NotAvailableException;
 import ru.practicum.shareit.error.exception.NotFoundException;
 import ru.practicum.shareit.error.exception.ValidationException;
 import ru.practicum.shareit.error.model.ErrorResponse;
@@ -26,8 +27,14 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleBadRequestException(final BadRequestException e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleNotAvailableException(final NotAvailableException e) {
         return new ErrorResponse(e.getMessage());
     }
 

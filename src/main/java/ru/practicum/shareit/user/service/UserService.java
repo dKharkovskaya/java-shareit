@@ -14,7 +14,7 @@ public interface UserService {
 
     User getById(int id);
 
-    Boolean deleteById(int id);
+    void deleteById(int id);
 
 
 }
