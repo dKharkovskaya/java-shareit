@@ -6,18 +6,10 @@ import ru.practicum.shareit.item.model.Comment;
 public class MapperComment {
 
     public static CommentDto toDtoResponse(Comment comment) {
-        if (comment == null) {
-            return null;
-        } else {
-            return new CommentDto(comment.getId(), comment.getText(), comment.getAuthor().getName(), comment.getCreated());
-        }
+        return new CommentDto(comment.getId(), comment.getText(), comment.getAuthor().getName(), comment.getCreated());
     }
 
     public static Comment toComment(CommentDto commentDto) {
-        if (commentDto == null) {
-            return null;
-        } else {
-            return new Comment(null, commentDto.getText(), null, null, null);
-        }
+        return new Comment(null, commentDto.getText(), null, null, null);
     }
 }

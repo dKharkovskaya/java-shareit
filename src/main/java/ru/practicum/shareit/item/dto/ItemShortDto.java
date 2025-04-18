@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class ItemShortDto {
-    private final Integer id;
+    private final Long id;
     private final String name;
 }

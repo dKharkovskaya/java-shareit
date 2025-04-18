@@ -29,25 +29,14 @@ public class MapperItem {
     }
 
     public static Item toItem(ItemDto dto, User owner, ItemRequest request) {
-        if (dto == null) {
-            return null;
-        } else {
-            return new Item(null, dto.getName(), dto.getDescription(), dto.getAvailable(), null, dto.getRequestId(), null);
-        }
+        return new Item(null, dto.getName(), dto.getDescription(), dto.getAvailable(), null, dto.getRequestId(), null);
     }
 
     public static Item toItem(ItemDto dto) {
-        if (dto == null) {
-            return null;
-        } else {
-            return new Item(dto.getId(), dto.getName(), dto.getDescription(), dto.getAvailable(), null, dto.getRequestId(), null);
-        }
+        return new Item(dto.getId(), dto.getName(), dto.getDescription(), dto.getAvailable(), null, dto.getRequestId(), null);
     }
 
     public static ItemWithBookingInfoDto toItemWithBookingInfoDto(Item item, List<CommentDto> comment) {
-        if (item == null) {
-            return null;
-        }
         return new ItemWithBookingInfoDto(
                 item.getId(),
                 item.getName(),

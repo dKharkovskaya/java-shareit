@@ -21,22 +21,22 @@ public class ItemController {
     private final ItemService itemService;
 
     @PostMapping
-    public ItemDto create(@Valid @RequestBody ItemDto dto, @RequestHeader(USER_ID) Integer userId) {
+    public ItemDto create(@Valid @RequestBody ItemDto dto, @RequestHeader(USER_ID) Long userId) {
         return itemService.create(dto, userId);
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto update(@RequestBody ItemDto dto, @PathVariable Integer itemId, @RequestHeader(USER_ID) Integer userId) {
+    public ItemDto update(@RequestBody ItemDto dto, @PathVariable Long itemId, @RequestHeader(USER_ID) Long userId) {
         return itemService.update(dto, itemId, userId);
     }
 
     @GetMapping("/{itemId}")
-    public ItemWithBookingInfoDto getById(@PathVariable Integer itemId) {
+    public ItemWithBookingInfoDto getById(@PathVariable Long itemId) {
         return itemService.getById(itemId);
     }
 
     @GetMapping
-    public List<ItemDto> getAllByUser(@RequestHeader(USER_ID) Integer userId) {
+    public List<ItemDto> getAllByUser(@RequestHeader(USER_ID) Long userId) {
         return itemService.findAllByUser(userId);
     }
 
@@ -49,11 +49,14 @@ public class ItemController {
 
     @PostMapping("/{itemId}/comment")
     public CommentDto createComment(
-            @RequestHeader("X-Sharer-User-Id") Integer ownerId,
+            @RequestHeader(USER_ID) Long ownerId,
             @RequestBody @Valid CommentDto commentDto,
-            @PathVariable Integer itemId
+            @PathVariable Long itemId
     ) {
         Comment addedComment = itemService.createComment(MapperComment.toComment(commentDto), itemId, ownerId);
+        if (addedComment == null) {
+            return null;
+        }
         return MapperComment.toDtoResponse(addedComment);
     }
 }

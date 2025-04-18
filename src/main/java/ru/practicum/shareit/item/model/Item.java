@@ -14,7 +14,7 @@ import ru.practicum.shareit.user.model.User;
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
     private String name;
     private String description;
     private Boolean available;
@@ -22,7 +22,7 @@ public class Item {
     @JoinColumn(name = "owner_id")
     private User owner;
     @Column(name = "request_id", insertable = false, updatable = false)
-    private Integer requestId;
+    private Long requestId;
     @ManyToOne
     @JoinColumn(name = "request_id")
     private ItemRequest request;

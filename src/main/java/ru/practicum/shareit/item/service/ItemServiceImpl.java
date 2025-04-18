@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,9 +41,14 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public ItemDto create(ItemDto dto, Integer userId) {
+    public ItemDto create(ItemDto dto, Long userId) {
+        Item item;
         User owner = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Not found user"));
-        Item item = MapperItem.toItem(dto, owner, null);
+        if (dto == null) {
+            item = null;
+        } else {
+            item = MapperItem.toItem(dto, owner, null);
+        }
         item.setOwner(owner);
         if (item.getRequest() != null) {
             ItemRequest itemRequest = itemRequestRepository.findById(item.getRequest().getId()).orElseThrow(() -> new NotFoundException("Not found item"));
@@ -52,9 +58,9 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto update(ItemDto dto, Integer itemId, Integer userId) {
+    public ItemDto update(ItemDto dto, Long itemId, Long userId) {
         dto.setId(itemId);
-        Integer itemDtoId = dto.getId();
+        Long itemDtoId = dto.getId();
         User owner = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Not found user"));
         String name = dto.getName();
         String description = dto.getDescription();
@@ -74,7 +80,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemWithBookingInfoDto getById(Integer id) {
+    public ItemWithBookingInfoDto getById(Long id) {
         Item item = itemRepository.findById(id).orElseThrow(() -> new NotFoundException("Not found item"));
         List<CommentDto> comments = commentRepository.findAllByItemId(item.getId()).stream()
                 .map(MapperComment::toDtoResponse)
@@ -86,7 +92,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> findAllByUser(Integer userId) {
+    public List<ItemDto> findAllByUser(Long userId) {
         return itemRepository.findAll().stream()
                 .filter(item -> item.getOwner().getId() == userId)
                 .toList().stream().map(MapperItem::toItemDto)
@@ -108,7 +114,7 @@ public class ItemServiceImpl implements ItemService {
 
     }
 
-    private void checkOwner(Item item, Integer ownerId) {
+    private void checkOwner(Item item, Long ownerId) {
         if (item.getOwner().getId() != ownerId) {
             throw new NotFoundException("The user not found");
         }
@@ -116,9 +122,9 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional
     @Override
-    public Comment createComment(Comment comment, int itemId, int userId) {
+    public Comment createComment(Comment comment, Long itemId, Long userId) {
         LocalDateTime nowDateTime = LocalDateTime.now();
-        Booking booking = bookingRepository.findFirstByItemIdAndBookerIdAndEndIsBefore(itemId, userId, nowDateTime).orElseThrow(() -> new IllegalArgumentException("Booking not found"));
+        Booking booking = bookingRepository.findFirstByItemIdAndBookerIdAndEndIsBefore(itemId, userId, nowDateTime).orElseThrow(() -> new IllegalArgumentException("Bad request"));
         comment.setAuthor(booking.getBooker());
         comment.setItem(booking.getItem());
         comment.setCreated(nowDateTime);

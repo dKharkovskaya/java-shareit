@@ -12,13 +12,13 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ItemWithBookingInfoDto {
-    private Integer id;
+    private Long id;
     @NotBlank
     private String name;
     @NotBlank
     private String description;
     private Boolean available;
-    private Integer requestId;
+    private Long requestId;
     private BookingResponseShortDto lastBooking;
     private BookingResponseShortDto nextBooking;
     private List<CommentDto> comments;

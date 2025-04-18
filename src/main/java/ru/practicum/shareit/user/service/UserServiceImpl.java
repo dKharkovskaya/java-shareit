@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User update(User user, Integer id) {
+    public User update(User user, Long id) {
         user.setId(id);
         validateEmail(user);
         User oldUser = userRepository.findById(user.getId()).orElseThrow(() -> new NotFoundException("Not found user"));
@@ -45,13 +45,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User getById(int id) {
+    public User getById(Long id) {
         return userRepository.getById(id);
     }
 
     @Override
     @Transactional
-    public void deleteById(int id) {
+    public void deleteById(Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("Not found user"));
         userRepository.delete(user);
     }

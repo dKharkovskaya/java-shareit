@@ -18,14 +18,14 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ItemDto {
-    private Integer id;
+    private Long id;
     @NotBlank
     private String name;
     @NotBlank
     private String description;
     @NotNull
     private Boolean available;
-    private Integer requestId;
+    private Long requestId;
     private BookingResponseShortDto lastBooking;
     private BookingResponseShortDto nextBooking;
     private List<CommentDto> comments;

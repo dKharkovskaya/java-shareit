@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class BookingResponseShortDto {
-    private Integer id;
-    private Integer bookerId;
+    private Long id;
+    private Long bookerId;
 }

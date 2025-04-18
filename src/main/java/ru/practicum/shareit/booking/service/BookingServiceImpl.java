@@ -38,7 +38,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public BookingResponseDto create(BookingDto bookingDto, Integer userId) {
+    public Booking create(BookingDto bookingDto, Long userId) {
         User booker = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Booking with " + userId + " Id is not found"));
         Item item = itemRepository.findById(bookingDto.getItemId()).orElseThrow(() -> new NotFoundException("Booking with " + userId + " Id is not found"));
         if (booker.getId() == (item.getOwner().getId())) {
@@ -50,14 +50,15 @@ public class BookingServiceImpl implements BookingService {
         bookingDto.setStatus(Status.WAITING);
         bookingDto.setItem(MapperItem.toItemDto(item));
         bookingDto.setBooker(MapperUser.toUserDto(booker));
+
         Booking booking = MapperBooking.toBooking(bookingDto);
         bookingDateCheck(booking);
-        return MapperBooking.toBookingReturnDto(bookingRepository.save(booking));
+        return bookingRepository.save(booking);
     }
 
     @Override
     @Transactional
-    public Booking approveBooking(Integer bookingId, Integer ownerId, Boolean isApproved) {
+    public Booking approveBooking(Long bookingId, Long ownerId, Boolean isApproved) {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new NotFoundException("Not found booking"));
         if (!Objects.equals(booking.getItem().getOwner().getId(), ownerId)) {
             throw new RuntimeException();
@@ -76,7 +77,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Booking getBooking(Integer bookingId, Integer userId) {
+    public Booking getBooking(Long bookingId, Long userId) {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new NotFoundException("Not found booking"));
         if (!Objects.equals(booking.getBooker().getId(), userId) && !Objects.equals(booking.getItem().getOwner().getId(), userId)) {
             throw new RuntimeException();
@@ -85,7 +86,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<Booking> getAllBookingsOfUserByState(Integer bookerId, State state, Integer from, Integer size) {
+    public List<Booking> getAllBookingsOfUserByState(Long bookerId, State state, Integer from, Integer size) {
         if (size <= 0) {
             throw new IllegalArgumentException("Размер должен быть больше нуля!");
         }
@@ -123,10 +124,10 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<Booking> getAllBookingsOfUserItems(Integer ownerId, State state, Integer from, Integer size) {
+    public List<Booking> getAllBookingsOfUserItems(Long ownerId, State state, Integer from, Integer size) {
         List<Booking> allBookings;
         LocalDateTime currentLocalDateTime = LocalDateTime.now();
-        List<Integer> itemIds = itemRepository.findByOwnerId(ownerId, Pageable.unpaged())
+        List<Long> itemIds = itemRepository.findByOwnerId(ownerId, Pageable.unpaged())
                 .stream().map(Item::getId).collect(Collectors.toList());
         if (itemIds.isEmpty()) {
             throw new NotFoundException("Not found");

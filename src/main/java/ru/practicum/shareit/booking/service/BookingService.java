@@ -9,15 +9,15 @@ import java.util.List;
 
 public interface BookingService {
 
-    Booking approveBooking(Integer bookingId, Integer ownerId, Boolean isApproved);
+    Booking approveBooking(Long bookingId, Long ownerId, Boolean isApproved);
 
-    Booking getBooking(Integer bookingId, Integer userId);
+    Booking getBooking(Long bookingId, Long userId);
 
-    List<Booking> getAllBookingsOfUserByState(Integer bookerId, State state, Integer from, Integer size);
+    List<Booking> getAllBookingsOfUserByState(Long bookerId, State state, Integer from, Integer size);
 
-    List<Booking> getAllBookingsOfUserItems(Integer ownerId, State state, Integer from, Integer size);
+    List<Booking> getAllBookingsOfUserItems(Long ownerId, State state, Integer from, Integer size);
 
-    BookingResponseDto create(BookingDto bookingDto, Integer userId);
+    Booking create(BookingDto bookingDto, Long userId);
 
 
 
