@@ -48,6 +48,7 @@ public class ItemServiceImpl implements ItemService {
         } else {
             item = MapperItem.toItem(dto, owner, null);
         }
+        assert item != null;
         item.setOwner(owner);
         if (item.getRequest() != null) {
             ItemRequest itemRequest = itemRequestRepository.findById(item.getRequest().getId()).orElseThrow(() -> new NotFoundException("Not found item"));
@@ -84,16 +85,13 @@ public class ItemServiceImpl implements ItemService {
         List<CommentDto> comments = commentRepository.findAllByItemId(item.getId()).stream()
                 .map(MapperComment::toDtoResponse)
                 .collect(Collectors.toList());
-        ItemWithBookingInfoDto itemWithBookingInfoDto = MapperItem.toItemWithBookingInfoDto(item, comments);
-
-
-        return itemWithBookingInfoDto;
+        return MapperItem.toItemWithBookingInfoDto(item, comments);
     }
 
     @Override
     public List<ItemDto> findAllByUser(Long userId) {
         return itemRepository.findAll().stream()
-                .filter(item -> item.getOwner().getId() == userId)
+                .filter(item -> Objects.equals(item.getOwner().getId(), userId))
                 .toList().stream().map(MapperItem::toItemDto)
                 .collect(Collectors.toList());
     }
@@ -107,14 +105,14 @@ public class ItemServiceImpl implements ItemService {
                 .filter(item -> item.getAvailable().equals(true))
                 .filter(item -> item.getName().toLowerCase().contains(text.toLowerCase()) ||
                         item.getDescription().toLowerCase().contains(text.toLowerCase()))
-                .collect(Collectors.toList()).stream()
+                .toList().stream()
                 .map(MapperItem::toItemDto)
                 .collect(Collectors.toList());
 
     }
 
     private void checkOwner(Item item, Long ownerId) {
-        if (item.getOwner().getId() != ownerId) {
+        if (!Objects.equals(item.getOwner().getId(), ownerId)) {
             throw new NotFoundException("The user not found");
         }
     }

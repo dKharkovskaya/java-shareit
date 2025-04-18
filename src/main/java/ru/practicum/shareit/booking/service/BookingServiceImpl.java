@@ -40,7 +40,7 @@ public class BookingServiceImpl implements BookingService {
     public Booking create(BookingDto bookingDto, Long userId) {
         User booker = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Booking with " + userId + " Id is not found"));
         Item item = itemRepository.findById(bookingDto.getItemId()).orElseThrow(() -> new NotFoundException("Booking with " + userId + " Id is not found"));
-        if (booker.getId() == (item.getOwner().getId())) {
+        if (Objects.equals(booker.getId(), item.getOwner().getId())) {
             throw new NotFoundException("Booker is equals owner");
         }
         if (!item.getAvailable()) {
