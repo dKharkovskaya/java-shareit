@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.booking.enums.State;
 import ru.practicum.shareit.booking.mapper.MapperBooking;
 import ru.practicum.shareit.booking.model.Booking;
@@ -24,7 +23,7 @@ public class BookingController {
 
     @PostMapping
     public BookingDto create(@RequestHeader(USER_ID) Long userId,
-                                     @RequestBody BookingDto bookingDto) {
+                             @RequestBody BookingDto bookingDto) {
         log.debug("received POST /booking by user Id/{}", userId);
         return MapperBooking.toBookingDto(bookingService.create(bookingDto, userId));
     }
