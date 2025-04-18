@@ -61,14 +61,14 @@ public class UserServiceImpl implements UserService {
             throw new ValidationException("The user email must include @, should be without spaces " +
                     "and shouldn't be blank");
         }
-        if (user.getName() == null || user.getName().equals("")) {
+        if (user.getName() == null || user.getName().isEmpty()) {
             throw new NotFoundException("The user name can't be empty or contains spaces");
         }
     }
 
     private void validateEmail(User user) {
         for (User u : userRepository.findAll()) {
-            if (u.getId() == user.getId()) {
+            if (Objects.equals(u.getId(), user.getId())) {
                 continue;
             }
             if (u.getEmail().equals(user.getEmail())) {
