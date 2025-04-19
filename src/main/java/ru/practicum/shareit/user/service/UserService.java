@@ -10,11 +10,11 @@ public interface UserService {
 
     User create(User user);
 
-    User update(User user, Integer id);
+    User update(User user, Long id);
 
-    User getById(int id);
+    User getById(Long id);
 
-    Boolean deleteById(int id);
+    void deleteById(Long id);
 
 
 }

@@ -1,64 +1,59 @@
 package ru.practicum.shareit.user.service;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.error.exception.ConflictException;
 import ru.practicum.shareit.error.exception.NotFoundException;
 import ru.practicum.shareit.error.exception.ValidationException;
 import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.*;
 
 @Service
-@Slf4j
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-
-    private Map<Integer, User> users = new HashMap<>();
+    private final UserRepository userRepository;
 
     @Override
     public Collection<User> findAll() {
-        return users.values();
+        return userRepository.findAll();
     }
 
     @Override
     public User create(User user) {
         validate(user);
-        user.setId(getNextId());
-        users.put(user.getId(), user);
-        log.info("user {} has been added", users.toString().toUpperCase());
-        return user;
+        validateEmail(user);
+        return userRepository.save(user);
     }
 
     @Override
-    public User update(User user, Integer id) {
+    @Transactional
+    public User update(User user, Long id) {
         user.setId(id);
         validateEmail(user);
-        User oldUser = users.get(user.getId());
+        User oldUser = userRepository.findById(user.getId()).orElseThrow(() -> new NotFoundException("Not found user"));
         if (user.getName() != null) {
             oldUser.setName(user.getName());
         }
         if (user.getEmail() != null) {
             oldUser.setEmail(user.getEmail());
         }
-        return oldUser;
+        return userRepository.save(oldUser);
     }
 
     @Override
-    public User getById(int id) {
-        if (!users.containsKey(id)) {
-            throw new NotFoundException("Пользователь не найден");
-        }
-        return users.get(id);
+    @Transactional
+    public User getById(Long id) {
+        return userRepository.getById(id);
     }
 
     @Override
-    public Boolean deleteById(int id) {
-        if (users.containsKey(id)) {
-            users.remove(id);
-            return true;
-        } else {
-            return false;
-        }
+    @Transactional
+    public void deleteById(Long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("Not found user"));
+        userRepository.delete(user);
     }
 
     private void validate(User user) {
@@ -66,22 +61,14 @@ public class UserServiceImpl implements UserService {
             throw new ValidationException("The user email must include @, should be without spaces " +
                     "and shouldn't be blank");
         }
-        if (user.getName() == null || user.getName().equals("")) {
+        if (user.getName() == null || user.getName().isEmpty()) {
             throw new NotFoundException("The user name can't be empty or contains spaces");
-        }
-        for (User u : users.values()) {
-            if (u.getId() == user.getId()) {
-                continue;
-            }
-            if (u.getEmail().equals(user.getEmail())) {
-                throw new ConflictException("The user email is already exist");
-            }
         }
     }
 
     private void validateEmail(User user) {
-        for (User u : users.values()) {
-            if (u.getId() == user.getId()) {
+        for (User u : userRepository.findAll()) {
+            if (Objects.equals(u.getId(), user.getId())) {
                 continue;
             }
             if (u.getEmail().equals(user.getEmail())) {
@@ -89,11 +76,4 @@ public class UserServiceImpl implements UserService {
             }
         }
     }
-
-    // вспомогательный метод для генерации идентификатора нового поста
-    private int getNextId() {
-        int currentMaxId = users.keySet().stream().mapToInt(id -> id).max().orElse(0);
-        return ++currentMaxId;
-    }
-
 }
