@@ -60,7 +60,7 @@ public class BookingServiceImpl implements BookingService {
     public Booking approveBooking(Long bookingId, Long ownerId, Boolean isApproved) {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new NotFoundException("Not found booking"));
         if (!Objects.equals(booking.getItem().getOwner().getId(), ownerId)) {
-            throw new RuntimeException();
+            throw new ValidationException("id владельцев не одинаковые");
         }
         if (!booking.getStatus().equals(Status.WAITING)) {
             throw new ValidationException("Статус бронирования " + bookingId + " отличен от " + Status.WAITING);
@@ -79,7 +79,7 @@ public class BookingServiceImpl implements BookingService {
     public Booking getBooking(Long bookingId, Long userId) {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new NotFoundException("Not found booking"));
         if (!Objects.equals(booking.getBooker().getId(), userId) && !Objects.equals(booking.getItem().getOwner().getId(), userId)) {
-            throw new RuntimeException();
+            throw new ValidationException("id владельцев не одинаковые");
         }
         return booking;
     }

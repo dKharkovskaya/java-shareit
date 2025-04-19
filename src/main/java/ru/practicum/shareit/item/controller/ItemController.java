@@ -54,9 +54,6 @@ public class ItemController {
             @PathVariable Long itemId
     ) {
         Comment addedComment = itemService.createComment(MapperComment.toComment(commentDto), itemId, ownerId);
-        if (addedComment == null) {
-            return null;
-        }
         return MapperComment.toDtoResponse(addedComment);
     }
 }
