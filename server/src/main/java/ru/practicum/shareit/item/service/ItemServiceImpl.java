@@ -49,6 +49,7 @@ public class ItemServiceImpl implements ItemService {
         } else {
             item = MapperItem.toItem(dto, owner, null);
         }
+        assert dto != null;
         Long requestId = dto.getRequestId();
         assert item != null;
         item.setOwner(owner);
