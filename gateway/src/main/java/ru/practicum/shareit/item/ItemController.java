@@ -10,7 +10,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.user.dto.UserDto;
 
 @RestController
 @RequestMapping(path = "/items")
@@ -79,7 +78,7 @@ public class ItemController {
     private void checkValidItemForUpdate(ItemDto item) {
         if (item.getName() != null) {
             if (item.getName().isBlank()) {
-               // throw new FieldIsNotValidException("Name");
+                // throw new FieldIsNotValidException("Name");
             }
         }
     }
