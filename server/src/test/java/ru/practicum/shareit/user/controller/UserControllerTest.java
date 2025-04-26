@@ -13,14 +13,11 @@ import ru.practicum.shareit.user.mapper.MapperUser;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
-import java.util.Collection;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = UserController.class)
@@ -34,13 +31,11 @@ public class UserControllerTest {
     @MockBean
     UserService userService;
 
-    UserController userController;
-
     UserDto userDto;
 
     @Test
     @SneakyThrows
-    void _createUser() {
+    void createUser() {
         userDto = new UserDto(1L, "name", "email@gamil.com");
 
         when(userService.create(MapperUser.toUser(userDto))).thenReturn(MapperUser.toUser(userDto));
